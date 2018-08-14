@@ -15,10 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from photosite.views import HelloPage
+from photosite import views
 from django.conf.urls import url, include
 
+
 urlpatterns = [
+	url(r'^accounts/login/$',views.LoginView, name='login'),
+	url(r'^accounts/logout/$',views.LogoutView, name='logout'),
     path('admin/', admin.site.urls),
-    url(r'^$', HelloPage),
+    url(r'^$', views.HelloPage, name='hello'),
+
 ]

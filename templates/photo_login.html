@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      	<div class="modal-header">
+        	<h5 class="modal-title">Authorization</h5>
+      	</div>
+		<form method="post" sction='{% url "login" %}'>
+{% csrf_token %}
+      
+<!--       <label>Username
+        <input type="text" name="username" placeholder="Enter Username">
+      </label>
+      <label>Password
+        <input type="password" name="password" placeholder="Enter Password">
+      </label>      
+	  <input type="submit" class="button" value="Log in">      
+</form>
+<br> -->
+		  	<div class="modal-body">
+		  		{% if system_message.text is not None %}
+		  			<div class="alert alert-danger" role="alert">{{ system_message.text }}</div>
+		  		{% endif %}
+		  		<div class="form-group">
+			   		<label for="exampleInputEmail1">Username</label>
+			    	<input type="text" name="username" class="form-control" placeholder="Enter Username">
+			  	</div>
+			  	<div class="form-group">
+			    	<label for="exampleInputPassword1">Password</label>
+			    	<input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Enter Password">
+			  	</div>
+		  	</div>
+		  	<div class="modal-footer">
+		    	<button type="submit" class="btn btn-primary">Log in</button> 
+		  	</div>
+      	</form>
+    </div>
+  </div>
+</div>
+{% endblock %} 
+
+
