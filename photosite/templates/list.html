@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body %}
+{% for e in list %}
+<div class="card-deck">
+		<div class="card">
+			<a href="{% url 'list' path=rp|add:'\\'|add:e.0 %}"><img class="card-img-top" src="{% static 'folder.png' %}"></a>
+		    <div class="card-body">
+		      	<h5 class="card-title">{{ e.0 }}</h5>
+		    </div>
+		</div>		
+		<div class="card">
+			<a href="{% url 'list' path=rp|add:'\\'|add:e.1 %}"><img class="card-img-top" src="{% static 'folder.png' %}"></a>
+		    <div class="card-body">
+		      	<h5 class="card-title">{{ e.1 }}</h5>
+		    </div>
+		</div>		
+		<div class="card">
+			<a href="{% url 'list' path=rp|add:'\\'|add:e.2 %}"><img class="card-img-top" src="{% static 'folder.png' %}"></a>
+		    <div class="card-body">
+		      	<h5 class="card-title">{{ e.2 }}</h5>
+		    </div>
+		</div>		
+</div>
+{% endfor %}
+	
+{% endblock %} 
