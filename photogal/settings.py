@@ -125,3 +125,4 @@ STATIC_URL = '/static/'
 
 ROOT_PATH = 'Z:\\MY_DOCS\\DOCUMS\\Foto\\_ФОТОАРХИВ'
 FOTO_COLS = 3
+THUMB_SIZE = 200

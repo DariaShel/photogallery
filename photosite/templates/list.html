@@ -16,7 +16,7 @@
 			</div>
 		{% else %}
 			<div class="card">
-				<a href="{% url 'image' path=rp|add:'\\'|add:e.name %}" target="_blank"><img class="card-img-top" src="{% url 'image' path=rp|add:'\\'|add:e.name %}"></a>
+				<a href="{% url 'image' path=rp|add:'\\'|add:e.name %}" target="_blank"><img class="card-img-top" src="{% url 'thumb' path=rp|add:'\\'|add:e.name %}"></a>
 		    	<div class="card-body">
 		      		<h5 class="card-title">{{ e.name }}</h5>
 		    	</div>

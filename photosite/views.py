@@ -1,4 +1,6 @@
 import os
+import io
+from PIL import Image
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -16,9 +18,13 @@ from photosite.models import Years
 def List(request,path=settings.ROOT_PATH):
 	args = {}
 	args['rp']=path
-	s=path.split('\\')
-	s='\\'.join(s[:-1])
-	args['back']=s
+	if path==settings.ROOT_PATH:
+		head = path
+	else:
+		(head, tail)=os.path.split(path)
+	# s=path.split('\\')
+	# s='\\'.join(s[:-1])
+	args['back']=head
 
 	cat_list = os.listdir(path)
 	col = settings.FOTO_COLS #  столбцы
@@ -54,7 +60,7 @@ def List(request,path=settings.ROOT_PATH):
 		return render(request,'file.html', args)	
 
 @login_required
-def Image(request,path=settings.ROOT_PATH):
+def Pic(request,path=settings.ROOT_PATH):
 	args = {}
 	args['rp']=path
 	response = HttpResponse()
@@ -63,6 +69,28 @@ def Image(request,path=settings.ROOT_PATH):
 	response.write(im.read())	
 	im.close()
 	return response
+
+
+@login_required
+def Thumb(request,path=settings.ROOT_PATH):
+	args = {}
+	args['rp']=path
+	response = HttpResponse()
+	response["Content-Type"] = 'image/jpeg'
+
+	thumb = Image.open(path)
+	
+	thumb.resize((settings.THUMB_SIZE, settings.THUMB_SIZE))
+	# thumb.thumbnail((settings.THUMB_SIZE, settings.THUMB_SIZE), Image.ANTIALIAS)	
+	
+	tfile = io.BytesIO()
+	thumb.save(tfile, 'JPEG')
+
+	response.write(tfile.getvalue())
+
+	return response	
+
+
 
 def LoginView(request):
 	args = {}
