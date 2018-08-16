@@ -9,16 +9,6 @@
       	</div>
 		<form method="post" sction='{% url "login" %}'>
 {% csrf_token %}
-      
-<!--       <label>Username
-        <input type="text" name="username" placeholder="Enter Username">
-      </label>
-      <label>Password
-        <input type="password" name="password" placeholder="Enter Password">
-      </label>      
-	  <input type="submit" class="button" value="Log in">      
-</form>
-<br> -->
 		  	<div class="modal-body">
 		  		{% if system_message.text is not None %}
 		  			<div class="alert alert-danger" role="alert">{{ system_message.text }}</div>

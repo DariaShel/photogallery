@@ -23,9 +23,8 @@ urlpatterns = [
 	url(r'^accounts/login/$',views.LoginView, name='login'),
 	url(r'^accounts/logout/$',views.LogoutView, name='logout'),
 	url(r'^list/(?P<path>.+)/$', views.List, name='list'),		
-	url(r'^list/$', views.List, name='list'),		
+	url(r'^$', views.List, name='list'),
 	url(r'^image/(?P<path>.+)/$', views.Image, name='image'),			
     path('admin/', admin.site.urls),
-    url(r'^$', views.HelloPage, name='hello'),
 
 ]

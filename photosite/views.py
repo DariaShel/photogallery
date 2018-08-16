@@ -11,26 +11,41 @@ from django.http import HttpResponse
 from photosite.models import Years
 
 # Create your views here.
-@login_required
-def HelloPage(request):
-	return render(request,'folders.html')
 
 @login_required
 def List(request,path=settings.ROOT_PATH):
 	args = {}
 	args['rp']=path
+	s=path.split('\\')
+	s='\\'.join(s[:-1])
+	args['back']=s
+
+	cat_list = os.listdir(path)
+	col = settings.FOTO_COLS #  столбцы
+	row = int(len(cat_list)/col) # строки
+
+	q = []
+	l=[]
+	
 
 	if os.path.isdir(path):
-		cat_list = os.listdir(path)
+		for i in cat_list:
+			x={}
+			if i.find('.jpg')<0 and i.find('.JPG')<0 and i.find('.jpeg')<0:
+				x = dict(name=i, type='fold')
+			else:
+				x = dict(name=i, type='img')
+			l.append(x)
 
-		col = 3 #  столбцы
-		row = int(len(cat_list)/col) # строки
-
-		q = []
-
-		for i in range(len(cat_list)//col):
-			q.append(cat_list[i*col:(i+1)*col])	  	
-
+		if len(l)%col != 0:
+			for i in range(len(l)//col+1):
+				if i==len(l)//col:
+					q.append(l[i*col:(i+1)*col-(col-len(l)%col)])
+				else:
+					q.append(l[i*col:(i+1)*col])
+		else:
+			for i in range(len(l)//col):
+				q.append(l[i*col:(i+1)*col])
 		args['list']=q
 
 		return render(request,'list.html', args)
@@ -59,7 +74,7 @@ def LoginView(request):
 	except KeyError:
 		return render(request, 'photo_login.html', args)
     
-	next_url = request.GET.get('next',reverse("list"))
+	next_url = request.GET.get('next',reverse('list'))
 
 	user = authenticate(username=username, password=password)
 	if user is not None:
@@ -80,7 +95,7 @@ def LoginView(request):
 def LogoutView(request):
 	logout(request)
 	args = {}
-	return redirect(reverse('hello'))
+	return redirect(reverse('list'))
 
 def handler403(request,args):
 	response = render(request, 'photo_login.html', args)
