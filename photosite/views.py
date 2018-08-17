@@ -1,6 +1,6 @@
 import os
 import io
-from PIL import Image
+from PIL import Image,ExifTags 
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -52,6 +52,9 @@ def List(request,path=settings.ROOT_PATH):
 		else:
 			for i in range(len(l)//col):
 				q.append(l[i*col:(i+1)*col])
+		if len(q[-1])<col:
+			while len(q[-1])!=col:
+				q[-1].append(dict(name='empty', type='empty'))
 		args['list']=q
 
 		return render(request,'list.html', args)
@@ -79,13 +82,17 @@ def Thumb(request,path=settings.ROOT_PATH):
 	response["Content-Type"] = 'image/jpeg'
 
 	thumb = Image.open(path)
-	
 	thumb.resize((settings.THUMB_SIZE, settings.THUMB_SIZE))
-	# thumb.thumbnail((settings.THUMB_SIZE, settings.THUMB_SIZE), Image.ANTIALIAS)	
-	
+	(x,y)=thumb.size
+	if x>y:
+		z=(x-y)/2
+		new=thumb.crop((z,0,x-z,y))
+	else:
+		z=(y-x)/2
+		new=thumb.crop((0,z,x,y-z))
+	#new=new.rotate(90)
 	tfile = io.BytesIO()
-	thumb.save(tfile, 'JPEG')
-
+	new.save(tfile, 'JPEG')
 	response.write(tfile.getvalue())
 
 	return response	
