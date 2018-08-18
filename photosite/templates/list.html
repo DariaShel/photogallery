@@ -2,6 +2,23 @@
 {% load staticfiles %}
 {% block body %}
 <div><p><a class="btn btn-primary" href="{% url 'list' path=back %}" role="button">Back</a></p></div>
+
+<div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalCenterTitle">######</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<img src="#" height=500 align="center" id="modalImage">
+			</div>
+		</div>
+	</div>
+</div>
+
 {% for row in list %}
 <p>
 <div class="card-deck">
@@ -15,12 +32,14 @@
 			    </div>
 			</div>
 		{% elif e.type == "img" %}
-			<div class="card">
-				<a href="{% url 'image' path=rp|add:'\\'|add:e.name %}" target="_blank"><img class="card-img-top" src="{% url 'thumb' path=rp|add:'\\'|add:e.name %}"></a>
-		    	<div class="card-body">
-		      		<h5 class="card-title">{{ e.name }}</h5>
-		    	</div>
+		<div class="card">
+			<a href="#">
+				<img class="card-img-top" src="{% url 'thumb' path=rp|add:'\\'|add:e.name %}" onclick="$('#exampleModalCenterTitle').html('{{e.name}}');$('#modalImage').attr('src','{% url 'image' path=rp|add:'\\'|add:e.name %}');$('#exampleModalCenter').modal()">
+			</a>
+			<div class="card-body">
+				<h5 class="card-title">{{ e.name }}</h5>
 			</div>
+		</div>
 		{% else %}
 			<div class="col-4"></div>
 		{% endif %}

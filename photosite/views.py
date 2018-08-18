@@ -1,6 +1,7 @@
 import os
 import io
-from PIL import Image,ExifTags 
+from PIL import Image
+from PIL.ExifTags import TAGS
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -82,6 +83,21 @@ def Thumb(request,path=settings.ROOT_PATH):
 	response["Content-Type"] = 'image/jpeg'
 
 	thumb = Image.open(path)
+	exif_orientation = 0
+	try:
+		exif = thumb._getexif()
+	except:
+		exif = None
+	if exif != None:
+		for tag, value in exif.items():
+			decoded = TAGS.get(tag, tag)
+			if isinstance(decoded,str):
+				if decoded.lower() == 'orientation':
+					exif_orientation = value
+					break
+	if exif_orientation == 3: thumb=thumb.rotate(180)
+	if exif_orientation == 6: thumb=thumb.rotate(270)
+	if exif_orientation == 8: thumb=thumb.rotate(90)
 	thumb.resize((settings.THUMB_SIZE, settings.THUMB_SIZE))
 	(x,y)=thumb.size
 	if x>y:
@@ -90,11 +106,9 @@ def Thumb(request,path=settings.ROOT_PATH):
 	else:
 		z=(y-x)/2
 		new=thumb.crop((0,z,x,y-z))
-	#new=new.rotate(90)
 	tfile = io.BytesIO()
 	new.save(tfile, 'JPEG')
 	response.write(tfile.getvalue())
-
 	return response	
 
 
