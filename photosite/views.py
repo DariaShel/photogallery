@@ -35,15 +35,16 @@ def List(request,path=settings.ROOT_PATH):
 	l=[]
 	
 
-	if os.path.isdir(path):
+	if os.path.isdir(path) and cat_list:
+		j=0
 		for i in cat_list:
 			x={}
 			if i.find('.jpg')<0 and i.find('.JPG')<0 and i.find('.jpeg')<0:
 				x = dict(name=i, type='fold')
 			else:
-				x = dict(name=i, type='img')
+				x = dict(name=i, type='img', num=j)
+				j+=1
 			l.append(x)
-
 		if len(l)%col != 0:
 			for i in range(len(l)//col+1):
 				if i==len(l)//col:
@@ -60,8 +61,10 @@ def List(request,path=settings.ROOT_PATH):
 
 		return render(request,'list.html', args)
 
-	else:
+	elif cat_list:
 		return render(request,'file.html', args)	
+	else:
+		return render(request,'base.html', args)	
 
 @login_required
 def Pic(request,path=settings.ROOT_PATH):
