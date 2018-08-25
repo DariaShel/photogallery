@@ -25,7 +25,8 @@ urlpatterns = [
 	url(r'^list/(?P<path>.+)/$', views.List, name='list'),		
 	url(r'^thumb/(?P<path>.+)/$', views.Thumb, name='thumb'),		
 	url(r'^$', views.List, name='list'),
-	url(r'^image/(?P<path>.+)/$', views.Pic, name='image'),			
+	url(r'^list/$', views.Add2Fav, name='star'),
+	url(r'^image/(?P<path>.+)/$', views.Preview, name='image'),			
     path('admin/', admin.site.urls),
 
 ]

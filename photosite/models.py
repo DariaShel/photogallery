@@ -1,7 +1,6 @@
 from django.db import models
 
 # Create your models here.
-class Years(models.Model):
-	title = models.PositiveSmallIntegerField()
-class Directories(models.Model):
-	title = models.CharField(max_length=150)
+class Favorites(models.Model):
+	user = models.CharField(max_length=150)
+	photo = models.TextField()

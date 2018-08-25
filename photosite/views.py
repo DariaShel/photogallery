@@ -11,8 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.http import HttpResponse
 
-from photosite.models import Years
-
+from photosite.models import Favorites
 # Create your views here.
 
 @login_required
@@ -23,8 +22,6 @@ def List(request,path=settings.ROOT_PATH):
 		head = path
 	else:
 		(head, tail)=os.path.split(path)
-	# s=path.split('\\')
-	# s='\\'.join(s[:-1])
 	args['back']=head
 
 	cat_list = os.listdir(path)
@@ -77,6 +74,33 @@ def Pic(request,path=settings.ROOT_PATH):
 	im.close()
 	return response
 
+@login_required
+def Preview(request,path=settings.ROOT_PATH):
+	args = {}
+	args['rp']=path
+	response = HttpResponse()
+	response["Content-Type"] = 'image/jpeg'
+	im = Image.open(path)
+	exif_orientation = 0
+	try:
+		exif = im._getexif()
+	except:
+		exif = None
+	if exif != None:
+		for tag, value in exif.items():
+			decoded = TAGS.get(tag, tag)
+			if isinstance(decoded,str):
+				if decoded.lower() == 'orientation':
+					exif_orientation = value
+					break
+	if exif_orientation == 3: im=im.rotate(180,expand=True)
+	if exif_orientation == 6: im=im.rotate(270,expand=True)
+	if exif_orientation == 8: im=im.rotate(90,expand=True)
+	#im.thumbnail((settings.PREVIEW_SIZE, settings.PREVIEW_SIZE))
+	preview = io.BytesIO()
+	im.save(preview, 'JPEG')
+	response.write(preview.getvalue())
+	return response
 
 @login_required
 def Thumb(request,path=settings.ROOT_PATH):
@@ -101,7 +125,7 @@ def Thumb(request,path=settings.ROOT_PATH):
 	if exif_orientation == 3: thumb=thumb.rotate(180)
 	if exif_orientation == 6: thumb=thumb.rotate(270)
 	if exif_orientation == 8: thumb=thumb.rotate(90)
-	thumb.resize((settings.THUMB_SIZE, settings.THUMB_SIZE))
+	thumb.thumbnail((settings.THUMB_SIZE, settings.THUMB_SIZE))
 	(x,y)=thumb.size
 	if x>y:
 		z=(x-y)/2
@@ -114,6 +138,16 @@ def Thumb(request,path=settings.ROOT_PATH):
 	response.write(tfile.getvalue())
 	return response	
 
+@login_required
+def Add2Fav(request):
+	args = {}
+	condition = 1
+	if request.method == 'POST':
+		if 'condition' in request.POST:
+			condition = request.POST['condition']
+			return HttpResponse('success')
+	args['condition'] = condition
+	return render(request,'list.html', args)
 
 
 def LoginView(request):

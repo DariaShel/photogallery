@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+<script type="text/javascript">
+	var URL = "{% url 'star' %}"
+	function updatestar(){
+		var data = {'condition' : condition};
+		$.post(URL,data,function(response){
+			if(response === 'success'){alert('Yay!');}
+			else{alert('Error');}
+		});
+	}
+	$(document).ready(function(){
+		$('#star').click(function(){
+			condition =* -1;
+			updatestar();
+		})
+	})
+</script>
 {% block body %}
 <div><p><a class="btn btn-primary" href="{% url 'list' path=back %}" role="button">Back</a></p></div>
 
@@ -13,13 +29,13 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+				<div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="false">
 					<div class="carousel-inner">
 						{% for row in list %}
 						{% for e in row %}
 						{% if e.type == "img" %}
 						<div class="carousel-item" id='slide{{e.num}}'>
-							<img class="d-block w-100" src="{% url 'image' path=rp|add:'\\'|add:e.name %}">
+							<img class="w-100 d-block" src="{% url 'image' path=rp|add:'\\'|add:e.name %}">
 						</div>
 						{% endif %}
 						{% endfor %}
@@ -39,6 +55,8 @@
 	</div>
 </div>
 
+
+
 {% for row in list %}
 <p>
 <div class="card-deck">
@@ -57,7 +75,15 @@
 				<img class="card-img-top" src="{% url 'thumb' path=rp|add:'\\'|add:e.name %}" onclick="$('#exampleModalCenterTitle').html('{{e.name}}');$('#slide{{e.num}}').addClass('active');$('#exampleModalCenter').modal();">
 			</a>
 			<div class="card-body">
-				<h5 class="card-title">{{ e.name }}</h5>
+				<h5 class="card-title">{{ e.name }}
+					<a href="#">
+					{% if condition == 1 %}
+					<img src="{% static 'star.png' %}" align="right" id='star' onclick="$(this).attr('src','{% static 'yellowstar.png' %}')">
+					{% else %}
+					<img src="{% static 'yellowstar.png' %}" align="right" id='star' onclick="$(this).attr('src','{% static 'star.png' %}')">
+					{% endif %}
+					</a>
+				</h5>
 			</div>
 		</div>
 		{% else %}
