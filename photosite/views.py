@@ -15,7 +15,7 @@ from photosite.models import Favorites
 # Create your views here.
 
 @login_required
-def List(request,path=settings.ROOT_PATH):
+def List(request,path=settings.ROOT_PATH,fav=None):
 	args = {}
 	args['rp']=path
 	if path==settings.ROOT_PATH:
@@ -39,7 +39,19 @@ def List(request,path=settings.ROOT_PATH):
 			if i.find('.jpg')<0 and i.find('.JPG')<0 and i.find('.jpeg')<0:
 				x = dict(name=i, type='fold')
 			else:
-				x = dict(name=i, type='img', num=j)
+				print(fav)
+				if fav is None:
+					p=os.path.join(path,i)
+					u=request.user
+					try:
+						favrow=Favorites.objects.get(uid=u, path=p)
+						fav=1
+						title=favrow.title if favrow.title else i
+					except Exception as err:
+						fav=0
+						title=i
+					
+				x = dict(name=i, type='img', num=j, fav=fav, title=title)
 				j+=1
 			l.append(x)
 		if len(l)%col != 0:
@@ -103,9 +115,10 @@ def Preview(request,path=settings.ROOT_PATH):
 	return response
 
 @login_required
-def Thumb(request,path=settings.ROOT_PATH):
+def Thumb(request,path=settings.ROOT_PATH,condition=-1):
 	args = {}
 	args['rp']=path
+	args['condition'] = condition
 	response = HttpResponse()
 	response["Content-Type"] = 'image/jpeg'
 
@@ -139,15 +152,25 @@ def Thumb(request,path=settings.ROOT_PATH):
 	return response	
 
 @login_required
-def Add2Fav(request):
-	args = {}
-	condition = 1
-	if request.method == 'POST':
-		if 'condition' in request.POST:
-			condition = request.POST['condition']
-			return HttpResponse('success')
-	args['condition'] = condition
-	return render(request,'list.html', args)
+def SetFav(request, path, value='2'):
+	try:
+		f=Favorites.objects.get(uid=request.user, path=path)
+	except:
+		f=None
+
+	if (value=='1') and (f==None):
+		Favorites.objects.create(uid=request.user, path=path)
+
+	if (value=='0') and (f!=None):
+		f.delete()
+	# fav = int(request.GET.get('fav',''))
+	print(path)
+	response = HttpResponse()
+	response["Content-Type"] = 'text/html'
+	response.write(value)
+	return response
+
+	# return List(request,path,fav)
 
 
 def LoginView(request):

@@ -1,21 +1,5 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-<script type="text/javascript">
-	var URL = "{% url 'star' %}"
-	function updatestar(){
-		var data = {'condition' : condition};
-		$.post(URL,data,function(response){
-			if(response === 'success'){alert('Yay!');}
-			else{alert('Error');}
-		});
-	}
-	$(document).ready(function(){
-		$('#star').click(function(){
-			condition =* -1;
-			updatestar();
-		})
-	})
-</script>
 {% block body %}
 <div><p><a class="btn btn-primary" href="{% url 'list' path=back %}" role="button">Back</a></p></div>
 
@@ -75,14 +59,13 @@
 				<img class="card-img-top" src="{% url 'thumb' path=rp|add:'\\'|add:e.name %}" onclick="$('#exampleModalCenterTitle').html('{{e.name}}');$('#slide{{e.num}}').addClass('active');$('#exampleModalCenter').modal();">
 			</a>
 			<div class="card-body">
-				<h5 class="card-title">{{ e.name }}
-					<a href="#">
-					{% if condition == 1 %}
-					<img src="{% static 'star.png' %}" align="right" id='star' onclick="$(this).attr('src','{% static 'yellowstar.png' %}')">
-					{% else %}
-					<img src="{% static 'yellowstar.png' %}" align="right" id='star' onclick="$(this).attr('src','{% static 'star.png' %}')">
-					{% endif %}
-					</a>
+				<h5 class="card-title">{{ e.title }}
+					<!-- <a href="#"> -->
+					
+					<i class="fa{% if e.fav %}s{% else %}r{% endif %} fa-star" style='cursor: pointer;' align="right" onclick="sw1($(this),'{{rp|urlencode}}','{{e.name}}')"></i>
+										
+<!-- 					<i class="far fa-star"  style = 'cursor: pointer;' align="right" onclick="$.ajax({type: 'GET',url: '{% url 'setfav' path=rp|add:'\\'|add:e.name value='1' %}'});sw1($(this))"></i> -->
+					<!-- </a> -->
 				</h5>
 			</div>
 		</div>
@@ -96,3 +79,22 @@
 {% endfor %}
 <div><p><a class="btn btn-primary" href="{% url 'list' path=back %}" role="button">Back</a></p></div>
 {% endblock %} 
+
+{% block block-js %}
+<script type="text/javascript">
+       function sw1(e,path,name) {
+       	    var status;
+       	    if (e.attr('class').substring(0,3)=='fas') { 
+       	    	e.attr('class','far fa-star') 
+       	    	status = '0' 
+
+       	    } else { 
+       	    	e.attr('class','fas fa-star')       	    	
+       	    	status = '1'
+       	    }
+       	    var url = "{% url 'setfav' path='8888' value='0' %}".replace('0',status).replace('8888',path+'%5C'+name);
+       	    // e.html(url)
+       	    $.ajax({type: 'GET',url:url});
+       	}
+</script>
+{% endblock %}
