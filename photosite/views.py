@@ -39,7 +39,6 @@ def List(request,path=settings.ROOT_PATH,fav=None):
 			if i.find('.jpg')<0 and i.find('.JPG')<0 and i.find('.jpeg')<0:
 				x = dict(name=i, type='fold')
 			else:
-				print(fav)
 				if fav is None:
 					p=os.path.join(path,i)
 					u=request.user
@@ -115,10 +114,9 @@ def Preview(request,path=settings.ROOT_PATH):
 	return response
 
 @login_required
-def Thumb(request,path=settings.ROOT_PATH,condition=-1):
+def Thumb(request,path=settings.ROOT_PATH):
 	args = {}
 	args['rp']=path
-	args['condition'] = condition
 	response = HttpResponse()
 	response["Content-Type"] = 'image/jpeg'
 
@@ -171,6 +169,37 @@ def SetFav(request, path, value='2'):
 	return response
 
 	# return List(request,path,fav)
+
+@login_required
+def PageFav(request):
+	f = Favorites.objects.filter(uid=request.user)
+	args = {}
+	col = settings.FOTO_COLS
+	l = []
+	q = []
+	j=0
+	for i in f:
+		title=i.title if i.title else os.path.basename(i.path)
+		x = dict(path=i.path,name=title,num=j)
+		j+=1
+		l.append(x)
+
+	if len(l)%col != 0:
+		for i in range(len(l)//col+1):
+			if i==len(l)//col:
+				q.append(l[i*col:(i+1)*col-(col-len(l)%col)])
+			else:
+				q.append(l[i*col:(i+1)*col])
+	else:
+		for i in range(len(l)//col):
+			q.append(l[i*col:(i+1)*col])
+	if len(q[-1])<col:
+		while len(q[-1])!=col:
+			q[-1].append(dict(name='empty', type='empty'))
+	args['list']=q
+
+	return render(request,'favorites.html', args)
+
 
 
 def LoginView(request):
