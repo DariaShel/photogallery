@@ -123,7 +123,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-ROOT_PATH = 'Z:\\MY_DOCS\\DOCUMS\\Foto\\_ФОТОАРХИВ'
+ROOT_PATH = 'C:\\Distrib\\photo'
 FOTO_COLS = 3
 THUMB_SIZE = 350
 PREVIEW_SIZE = 1000
