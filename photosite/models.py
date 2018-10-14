@@ -8,3 +8,7 @@ class Favorites(models.Model):
 	uid = models.ForeignKey(User, on_delete=CASCADE, default=None)
 	path = models.CharField(max_length=512)
 	title = models.CharField(max_length=32, default=None, null=True)
+
+class Photo(models.Model):
+	relpath = models.CharField(max_length=512, db_index=True, unique=True)
+	title = models.CharField(max_length=32, default=None, null=True)

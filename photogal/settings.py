@@ -124,6 +124,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 ROOT_PATH = 'C:\\Distrib\\photo'
+THUMB_PATH = 'C:\\Distrib\\photogal\\thumbs'
+PREV_PATH = 'C:\\Distrib\\photogal\\previews'
+VALID_EXT = ['.jpg','.jpeg','.png']
 FOTO_COLS = 3
 THUMB_SIZE = 350
 PREVIEW_SIZE = 1000
